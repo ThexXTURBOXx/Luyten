@@ -307,18 +307,28 @@ public class MainMenuBar extends JMenuBar {
         themesGroup.add(a);
         themesMenu.add(a);
 
+        a = new JRadioButtonMenuItem(new ThemeAction("Druid", "druid.xml"));
+        a.setSelected("dark.xml".equals(luytenPrefs.getThemeXml()));
+        themesGroup.add(a);
+        themesMenu.add(a);
+
         a = new JRadioButtonMenuItem(new ThemeAction("Eclipse", "eclipse.xml"));
         a.setSelected("eclipse.xml".equals(luytenPrefs.getThemeXml()));
         themesGroup.add(a);
         themesMenu.add(a);
 
-        a = new JRadioButtonMenuItem(new ThemeAction("Visual Studio", "vs.xml"));
-        a.setSelected("vs.xml".equals(luytenPrefs.getThemeXml()));
+        a = new JRadioButtonMenuItem(new ThemeAction("IntelliJ", "idea.xml"));
+        a.setSelected("idea.xml".equals(luytenPrefs.getThemeXml()));
         themesGroup.add(a);
         themesMenu.add(a);
 
-        a = new JRadioButtonMenuItem(new ThemeAction("IntelliJ", "idea.xml"));
+        a = new JRadioButtonMenuItem(new ThemeAction("Monokai", "monokai.xml"));
         a.setSelected("idea.xml".equals(luytenPrefs.getThemeXml()));
+        themesGroup.add(a);
+        themesMenu.add(a);
+
+        a = new JRadioButtonMenuItem(new ThemeAction("Visual Studio", "vs.xml"));
+        a.setSelected("vs.xml".equals(luytenPrefs.getThemeXml()));
         themesGroup.add(a);
         themesMenu.add(a);
     }
@@ -486,15 +496,15 @@ public class MainMenuBar extends JMenuBar {
             link.addMouseListener(new LinkListener(procyon, link));
             pane.add(link);
             pane.add(new JLabel("Version: " + Procyon.version()));
-            pane.add(new JLabel("(c) 2023 Mike Strobel"));
+            pane.add(new JLabel("(c) 2024 Mike Strobel"));
 
             String rsyntax = "https://github.com/bobbylight/RSyntaxTextArea";
             link = new JLabel("<HTML><FONT color=\"#000099\"><U>" + rsyntax + "</U></FONT></HTML>");
             link.setCursor(new Cursor(Cursor.HAND_CURSOR));
             link.addMouseListener(new LinkListener(rsyntax, link));
             pane.add(link);
-            pane.add(new JLabel("Version: 3.3.2"));
-            pane.add(new JLabel("(c) 2023 Robert Futrell"));
+            pane.add(new JLabel("Version: 3.4.1"));
+            pane.add(new JLabel("(c) 2024 Robert Futrell"));
 
             String picocli = "https://github.com/remkop/picocli";
             link = new JLabel("<HTML><FONT color=\"#000099\"><U>" + picocli + "</U></FONT></HTML>");
@@ -502,7 +512,7 @@ public class MainMenuBar extends JMenuBar {
             link.addMouseListener(new LinkListener(picocli, link));
             pane.add(link);
             pane.add(new JLabel("Version: " + CommandLine.VERSION));
-            pane.add(new JLabel("(c) 2023 Remko Popma"));
+            pane.add(new JLabel("(c) 2024 Remko Popma"));
             pane.add(new JLabel(" "));
 
             JOptionPane.showMessageDialog(null, pane);

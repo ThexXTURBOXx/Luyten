@@ -13,19 +13,19 @@ public class CellRenderer extends DefaultTreeCellRenderer {
 
     private static final long serialVersionUID = -5691181006363313993L;
 
-    Icon pack;
-    Icon java_image;
-    Icon yml_image;
-    Icon file_image;
+    private final Icon pack;
+    private final Icon javaImage;
+    private final Icon ymlImage;
+    private final Icon fileImage;
 
     public CellRenderer() {
         this.pack = new ImageIcon(
                 Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/package_obj.png")));
-        this.java_image = new ImageIcon(
+        this.javaImage = new ImageIcon(
                 Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/java.png")));
-        this.yml_image = new ImageIcon(
+        this.ymlImage = new ImageIcon(
                 Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/yml.png")));
-        this.file_image = new ImageIcon(
+        this.fileImage = new ImageIcon(
                 Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/file.png")));
     }
 
@@ -39,13 +39,13 @@ public class CellRenderer extends DefaultTreeCellRenderer {
         } else {
             switch (FileUtil.getLanguage(getFileName(node))) {
             case SyntaxConstants.SYNTAX_STYLE_JAVA:
-                setIcon(this.java_image);
+                setIcon(this.javaImage);
                 break;
             case SyntaxConstants.SYNTAX_STYLE_YAML:
-                setIcon(this.yml_image);
+                setIcon(this.ymlImage);
                 break;
             default:
-                setIcon(this.file_image);
+                setIcon(this.fileImage);
                 break;
             }
         }

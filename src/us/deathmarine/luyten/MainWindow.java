@@ -148,7 +148,7 @@ public class MainWindow extends JFrame {
         }
 
         if (jarModel != null && (fileFromCommandLine.getName().toLowerCase().endsWith(".jar")
-                || fileFromCommandLine.getName().toLowerCase().endsWith(".zip"))) {
+                                 || fileFromCommandLine.getName().toLowerCase().endsWith(".zip"))) {
             jarModel.startWarmUpThread();
         }
 
@@ -213,7 +213,7 @@ public class MainWindow extends JFrame {
 
     public void onCloseFileMenu() {
         this.getSelectedModel().closeFile();
-        jarModels.remove(getSelectedModel());
+        jarModels.values().remove(getSelectedModel());
     }
 
     public void onSaveAsMenu() {
@@ -375,7 +375,7 @@ public class MainWindow extends JFrame {
     public void onThemesChanged() {
         for (Model jarModel : jarModels.values()) {
             jarModel.changeTheme(luytenPrefs.getThemeXml());
-            luytenPrefs.setFont_size(jarModel.getTheme().baseFont.getSize());
+            luytenPrefs.setFontSize(jarModel.getTheme().baseFont.getSize());
         }
     }
 

@@ -45,7 +45,7 @@ public class WindowPosition {
             return false;
         }
         return windowY >= -20 && windowY <= screenSize.height - 50 && windowX >= 50 - windowWidth
-                && windowX <= screenSize.width - 50;
+               && windowX <= screenSize.width - 50;
     }
 
     public boolean isFullScreen() {

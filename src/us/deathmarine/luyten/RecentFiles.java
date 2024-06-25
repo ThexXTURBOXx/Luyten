@@ -45,7 +45,7 @@ public class RecentFiles {
     }
 
     public static void save() {
-        if (paths.size() == 0) {
+        if (paths.isEmpty()) {
             prefs.put("recentFiles", "");
             return;
         }
@@ -54,7 +54,7 @@ public class RecentFiles {
 
         for (int i = 0; i < paths.size(); i++) {
             if (i != 0) sb.append(',');
-			
+
 			/*if (!new File(paths.get(i)).exists()) {
 				paths.remove(i);
 				continue;

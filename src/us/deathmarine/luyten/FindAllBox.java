@@ -254,31 +254,32 @@ public class FindAllBox extends JDialog {
                                             }
                                         } catch (IllegalStateException ise) {
                                             if (ise.getMessage().contains("Invalid BootstrapMethods attribute entry: "
-                                                    + "2 additional arguments required for method "
-                                                    + "java/lang/invoke/StringConcatFactory.makeConcatWithConstants, "
-                                                    + "but only 1 specified.")) {
+                                                                          + "2 additional arguments required for "
+                                                                          + "method "
+                                                                          + "java/lang/invoke/StringConcatFactory"
+                                                                          + ".makeConcatWithConstants, "
+                                                                          + "but only 1 specified.")) {
                                                 // Known issue of Procyon <= 0.5.35 and fix not yet released, refer to
                                                 // https://web.archive.org/web/20200722211732/https://bitbucket.org/mstrobel/procyon/issues/336/
                                                 // Searching in a WAR or JAR file could pop-up a lot of error dialogs
                                                 // for a lot of class files, we simply say nothing here
                                                 addClassName(entry.getName() + "  (search failed due to known "
-                                                        + "Exception in Procyon <= 0.5.35. Opening file will fail "
-                                                        + "too)");
+                                                             + "Exception in Procyon <= 0.5.35. Opening file will fail "
+                                                             + "too)");
                                             } else {
                                                 // all other IllegalStateException cases
                                                 addClassName(entry.getName() + "  (search failed due to Exception. "
-                                                        + "Opening file will fail too)");
+                                                             + "Opening file will fail too)");
                                                 Luyten.showExceptionDialog("Caught Exception on: " + entry.getName(),
                                                         ise);
                                             }
                                         } catch (Exception e) {
                                             addClassName(entry.getName() + "  (search failed due to Exception. "
-                                                    + "Opening file will fail too)");
+                                                         + "Opening file will fail too)");
                                             Luyten.showExceptionDialog("Caught Exception on: " + entry.getName(), e);
                                         }
                                     }
                                 } else {
-
                                     StringBuilder sb = new StringBuilder();
                                     double ascii = 0;
                                     double other = 0;

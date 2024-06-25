@@ -10,18 +10,19 @@ import java.util.jar.JarFile;
 
 public class JarEntryFilter {
 
-    private JarFile jfile;
+    private final JarFile jarFile;
 
     public JarEntryFilter() {
+        this(null);
     }
 
-    public JarEntryFilter(JarFile jfile) {
-        this.jfile = jfile;
+    public JarEntryFilter(JarFile jarFile) {
+        this.jarFile = jarFile;
     }
 
     public List<String> getAllEntriesFromJar() {
         List<String> mass = new ArrayList<>();
-        Enumeration<JarEntry> entries = jfile.entries();
+        Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             JarEntry e = entries.nextElement();
             if (!e.isDirectory()) {
@@ -33,7 +34,7 @@ public class JarEntryFilter {
 
     public List<String> getEntriesWithoutInnerClasses() {
         List<String> mass = new ArrayList<>();
-        Enumeration<JarEntry> entries = jfile.entries();
+        Enumeration<JarEntry> entries = jarFile.entries();
         Set<String> possibleInnerClasses = new HashSet<>();
         Set<String> baseClasses = new HashSet<>();
 
@@ -42,7 +43,7 @@ public class JarEntryFilter {
             if (!e.isDirectory()) {
                 String entryName = e.getName();
 
-                if (entryName.trim().length() > 0) {
+                if (!entryName.trim().isEmpty()) {
                     entryName = entryName.trim();
 
                     if (!entryName.endsWith(".class")) {
@@ -70,14 +71,6 @@ public class JarEntryFilter {
             }
         }
         return mass;
-    }
-
-    public JarFile getJfile() {
-        return jfile;
-    }
-
-    public void setJfile(JarFile jfile) {
-        this.jfile = jfile;
     }
 
 }

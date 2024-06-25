@@ -8,9 +8,10 @@ import javax.swing.tree.TreePath;
 
 public class TreeUtil {
 
-    private JTree tree;
+    private final JTree tree;
 
     public TreeUtil() {
+        this(null);
     }
 
     public TreeUtil(JTree tree) {
@@ -73,10 +74,6 @@ public class TreeUtil {
 
     public JTree getTree() {
         return tree;
-    }
-
-    public void setTree(JTree tree) {
-        this.tree = tree;
     }
 
 }

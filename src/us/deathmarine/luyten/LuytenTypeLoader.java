@@ -8,20 +8,20 @@ import java.util.List;
 
 public final class LuytenTypeLoader implements ITypeLoader {
 
-    private final List<ITypeLoader> _typeLoaders;
+    private final List<ITypeLoader> typeLoaders;
 
     public LuytenTypeLoader() {
-        _typeLoaders = new ArrayList<>();
-        _typeLoaders.add(new InputTypeLoader());
+        typeLoaders = new ArrayList<>();
+        typeLoaders.add(new InputTypeLoader());
     }
 
     public List<ITypeLoader> getTypeLoaders() {
-        return _typeLoaders;
+        return typeLoaders;
     }
 
     @Override
     public boolean tryLoadType(final String internalName, final Buffer buffer) {
-        for (final ITypeLoader typeLoader : _typeLoaders) {
+        for (final ITypeLoader typeLoader : typeLoaders) {
             if (typeLoader.tryLoadType(internalName, buffer)) {
                 return true;
             }

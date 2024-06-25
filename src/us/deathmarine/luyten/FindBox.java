@@ -28,13 +28,13 @@ public class FindBox extends JDialog {
 
     private static final long serialVersionUID = -4125409760166690462L;
 
-    JCheckBox mcase;
-    JCheckBox regex;
-    JCheckBox wholew;
-    JCheckBox reverse;
-    JCheckBox wrap;
+    private final JCheckBox mcase;
+    private final JCheckBox regex;
+    private final JCheckBox wholew;
+    private final JCheckBox reverse;
+    private final JCheckBox wrap;
     private final JButton findButton;
-    JTextField textField;
+    private final JTextField textField;
     private final MainWindow mainWindow;
 
     public void showFindBox() {
@@ -130,7 +130,7 @@ public class FindBox extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent event) {
-            if (textField.getText().length() == 0)
+            if (textField.getText().isEmpty())
                 return;
 
             RSyntaxTextArea pane = mainWindow.getSelectedModel().getCurrentTextArea();
@@ -206,7 +206,7 @@ public class FindBox extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (textField.getText().length() == 0)
+            if (textField.getText().isEmpty())
                 return;
             RSyntaxTextArea pane = mainWindow.getSelectedModel().getCurrentTextArea();
             if (pane == null)

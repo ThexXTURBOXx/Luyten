@@ -507,7 +507,7 @@ public class JFontChooser extends JComponent {
                 Luyten.showExceptionDialog("Exception!", e);
             }
 
-            if (newValue.length() > 0) {
+            if (!newValue.isEmpty()) {
                 int index = targetList.getNextMatch(newValue, 0, Position.Bias.Forward);
                 if (index < 0) {
                     index = 0;

@@ -14,7 +14,7 @@ class DirPreferences {
     void retrieveOpenDialogDir(JFileChooser fc) {
         try {
             String currentDirStr = luytenPrefs.getFileOpenCurrentDirectory();
-            if (currentDirStr != null && currentDirStr.trim().length() > 0) {
+            if (currentDirStr != null && !currentDirStr.trim().isEmpty()) {
                 File currentDir = new File(currentDirStr);
                 if (currentDir.exists() && currentDir.isDirectory()) {
                     fc.setCurrentDirectory(currentDir);
@@ -39,7 +39,7 @@ class DirPreferences {
     void retrieveSaveDialogDir(JFileChooser fc) {
         try {
             String currentDirStr = luytenPrefs.getFileSaveCurrentDirectory();
-            if (currentDirStr != null && currentDirStr.trim().length() > 0) {
+            if (currentDirStr != null && !currentDirStr.trim().isEmpty()) {
                 File currentDir = new File(currentDirStr);
                 if (currentDir.exists() && currentDir.isDirectory()) {
                     fc.setCurrentDirectory(currentDir);

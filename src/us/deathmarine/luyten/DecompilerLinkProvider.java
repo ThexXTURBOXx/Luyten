@@ -128,8 +128,8 @@ public class DecompilerLinkProvider implements LinkProvider {
         String packageStr = typeRef.getPackageName();
         TypeReference mostOuterTypeRef = getMostOuterTypeRef(typeRef);
         String mostOuterTypeName = mostOuterTypeRef.getName();
-        if (name != null && packageStr != null && mostOuterTypeName != null && name.trim().length() > 0
-                && mostOuterTypeName.trim().length() > 0) {
+        if (name != null && packageStr != null && mostOuterTypeName != null && !name.trim().isEmpty()
+            && !mostOuterTypeName.trim().isEmpty()) {
             String pathStr = packageStr.replaceAll("\\.", "/") + "/" + mostOuterTypeName;
             String typeStr = packageStr + "." + name.replace(".", "$");
             return pathStr + "|" + typeStr;
@@ -223,7 +223,7 @@ public class DecompilerLinkProvider implements LinkProvider {
             if (currentTypeQualifiedName == null || currentTypeQualifiedName.trim().length() <= 0)
                 return false;
             if (typeStr.equals(currentTypeQualifiedName) || typeStr.startsWith(currentTypeQualifiedName + ".")
-                    || typeStr.startsWith(currentTypeQualifiedName + "$"))
+                || typeStr.startsWith(currentTypeQualifiedName + "$"))
                 return false;
         }
 
@@ -312,7 +312,7 @@ public class DecompilerLinkProvider implements LinkProvider {
 
             if (uniqueStr.startsWith("type")) {
                 String desc = typeDef.getBriefDescription();
-                if (desc != null && desc.trim().length() > 0) {
+                if (desc != null && !desc.trim().isEmpty()) {
                     readableLink = desc;
                 }
             } else if (uniqueStr.startsWith("method")) {
@@ -320,7 +320,7 @@ public class DecompilerLinkProvider implements LinkProvider {
                 if (methodDef == null)
                     return null;
                 String desc = methodDef.getBriefDescription();
-                if (desc != null && desc.trim().length() > 0) {
+                if (desc != null && !desc.trim().isEmpty()) {
 
                     if (desc.contains("void <init>")) {
                         String constructorName = typeDef.getName();
@@ -346,7 +346,7 @@ public class DecompilerLinkProvider implements LinkProvider {
                 if (fieldDef == null)
                     return null;
                 String desc = fieldDef.getBriefDescription();
-                if (desc != null && desc.trim().length() > 0) {
+                if (desc != null && !desc.trim().isEmpty()) {
                     readableLink = erasePackageInfoFromDesc(desc) + declaredSuffix;
                 }
 

@@ -22,10 +22,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -255,7 +255,7 @@ public class Model extends JSplitPane {
         @Override
         public void mousePressed(MouseEvent event) {
             boolean isClickCountMatches = (event.getClickCount() == 1 && luytenPrefs.isSingleClickOpenEnabled())
-                    || (event.getClickCount() == 2 && !luytenPrefs.isSingleClickOpenEnabled());
+                                          || (event.getClickCount() == 2 && !luytenPrefs.isSingleClickOpenEnabled());
             if (!isClickCountMatches)
                 return;
 
@@ -362,7 +362,7 @@ public class Model extends JSplitPane {
                     extractClassToTextPane(type, name, path.toString(), null);
                 } else {
                     getLabel().setText("Opening: " + name);
-                    try (InputStream in = new FileInputStream(file)) {
+                    try (InputStream in = Files.newInputStream(file.toPath())) {
                         extractSimpleFileEntryToTextPane(in, name, path.toString());
                     }
                 }
@@ -385,7 +385,7 @@ public class Model extends JSplitPane {
 
     void extractClassToTextPane(TypeReference type, String tabTitle, String path, String navigationLink)
             throws Exception {
-        if (tabTitle == null || tabTitle.trim().length() < 1 || path == null) {
+        if (tabTitle == null || tabTitle.trim().isEmpty() || path == null) {
             throw new FileEntryNotFoundException();
         }
         OpenFile sameTitledOpen = null;
@@ -430,7 +430,7 @@ public class Model extends JSplitPane {
 
     public void extractSimpleFileEntryToTextPane(InputStream inputStream, String tabTitle, String path)
             throws Exception {
-        if (inputStream == null || tabTitle == null || tabTitle.trim().length() < 1 || path == null) {
+        if (inputStream == null || tabTitle == null || tabTitle.trim().isEmpty() || path == null) {
             throw new FileEntryNotFoundException();
         }
         OpenFile sameTitledOpen = null;
@@ -484,7 +484,7 @@ public class Model extends JSplitPane {
             }
             for (OpenFile open : hmap) {
                 if (house.indexOfComponent(open.scrollPane) == selectedIndex
-                        && open.getType() != null && !open.isContentValid()) {
+                    && open.getType() != null && !open.isContentValid()) {
                     updateOpenClass(open);
                     break;
                 }
@@ -626,7 +626,7 @@ public class Model extends JSplitPane {
     }
 
     public DefaultMutableTreeNode loadNodesByUserObj(DefaultMutableTreeNode node, List<TreeNodeUserObject> args) {
-        if (args.size() > 0) {
+        if (!args.isEmpty()) {
             TreeNodeUserObject name = args.remove(0);
             DefaultMutableTreeNode nod = getChild(node, name);
             if (nod == null)
@@ -795,8 +795,8 @@ public class Model extends JSplitPane {
                 packages.put(packagePath, new TreeSet<>(sortByFileExtensionsComparator));
             }
             packages.get(packagePath).add(packageEntry);
-            if (!entry.startsWith("META-INF") && packageRoot.trim().length() > 0
-                    && entry.matches(".*\\.(class|java|prop|properties)$")) {
+            if (!entry.startsWith("META-INF") && !packageRoot.trim().isEmpty()
+                && entry.matches(".*\\.(class|java|prop|properties)$")) {
                 classContainingPackageRoots.add(packageRoot);
             }
         }
@@ -830,7 +830,7 @@ public class Model extends JSplitPane {
         for (String packagePath : packages.keySet()) {
             String packageRoot = packagePath.replaceAll("/.*$", "");
             if (!classContainingPackageRoots.contains(packageRoot) && !packagePath.startsWith("META-INF")
-                    && packagePath.length() > 0) {
+                && !packagePath.isEmpty()) {
                 List<String> packagePathElements = Arrays.asList(packagePath.split("/"));
                 for (String entry : packages.get(packagePath)) {
                     ArrayList<String> list = new ArrayList<>(packagePathElements);
@@ -998,10 +998,6 @@ public class Model extends JSplitPane {
 
     public void setLabel(JLabel label) {
         this.label = label;
-    }
-
-    public State getState() {
-        return state;
     }
 
     public Theme getTheme() {

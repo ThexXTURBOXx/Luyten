@@ -15,7 +15,7 @@ public class LuytenPreferences {
     private String themeXml = DEFAULT_THEME_XML;
     private String fileOpenCurrentDirectory = "";
     private String fileSaveCurrentDirectory = "";
-    private int font_size = 10;
+    private int fontSize = 10;
 
     private boolean isPackageExplorerStyle = true;
     private boolean isFilterOutInnerClassEntries = true;
@@ -78,12 +78,12 @@ public class LuytenPreferences {
         this.isExitByEscEnabled = isExitByEscEnabled;
     }
 
-    public int getFont_size() {
-        return font_size;
+    public int getFontSize() {
+        return fontSize;
     }
 
-    public void setFont_size(int font_size) {
-        this.font_size = font_size;
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
     }
 
 }

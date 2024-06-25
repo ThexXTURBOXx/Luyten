@@ -99,7 +99,7 @@ public class OpenFile {
             int result = fontChooser.showDialog(mainWindow);
             if (result == JFontChooser.OK_OPTION) {
                 textArea.setFont(fontChooser.getSelectedFont());
-                luytenPrefs.setFont_size(fontChooser.getSelectedFontSize());
+                luytenPrefs.setFontSize(fontChooser.getSelectedFontSize());
             }
         });
         pop.add(item);
@@ -108,14 +108,14 @@ public class OpenFile {
         theme.apply(textArea);
 
         textArea.setFont(new Font(textArea.getFont().getName(), textArea.getFont().getStyle(),
-                luytenPrefs.getFont_size()));
+                luytenPrefs.getFontSize()));
 
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         final JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
         if (verticalScrollbar != null) {
             verticalScrollbar.addAdjustmentListener(e -> {
                 String content = textArea.getText();
-                if (content == null || content.length() == 0)
+                if (content == null || content.isEmpty())
                     return;
                 int scrollValue = verticalScrollbar.getValue() - verticalScrollbar.getMinimum();
                 int scrollMax = verticalScrollbar.getMaximum() - verticalScrollbar.getMinimum();
@@ -176,7 +176,7 @@ public class OpenFile {
                 } else {
                     textArea.setFont(new Font(font.getName(), font.getStyle(), ++size));
                 }
-                luytenPrefs.setFont_size(size);
+                luytenPrefs.setFontSize(size);
             } else {
                 if (scrollPane.isWheelScrollingEnabled() && e.getWheelRotation() != 0) {
                     JScrollBar toScroll = scrollPane.getVerticalScrollBar();
@@ -301,7 +301,7 @@ public class OpenFile {
                                 if (limitScroll && i > 0) {
                                     assert limit != -1;
                                     if ((direction < 0 && newValue < limit)
-                                            || (direction > 0 && newValue > limit)) {
+                                        || (direction > 0 && newValue > limit)) {
                                         break;
                                     }
                                 }
@@ -481,7 +481,7 @@ public class OpenFile {
     }
 
     private void warmUpWithFirstLink() {
-        if (selectionToUniqueStrTreeMap.keySet().size() > 0) {
+        if (!selectionToUniqueStrTreeMap.keySet().isEmpty()) {
             Selection selection = selectionToUniqueStrTreeMap.keySet().iterator().next();
             getLinkDescriptionForOffset(selection.from);
         }
@@ -573,7 +573,7 @@ public class OpenFile {
                 return descriptionCached;
 
             String description = linkProvider.getLinkDescription(uniqueStr);
-            if (description != null && description.trim().length() > 0) {
+            if (description != null && !description.trim().isEmpty()) {
                 readableLinksCache.put(uniqueStr, description);
                 return description;
             }
@@ -643,7 +643,7 @@ public class OpenFile {
                 int currentUpperLine = textArea.getVisibleRect().y / textArea.getLineHeight();
 
                 if (selectionLineNum <= currentUpperLine + 2
-                        || selectionLineNum >= currentUpperLine + viewportLineCount - 4) {
+                    || selectionLineNum >= currentUpperLine + viewportLineCount - 4) {
                     Rectangle rectToScroll = new Rectangle();
                     rectToScroll.x = 0;
                     rectToScroll.width = 1;

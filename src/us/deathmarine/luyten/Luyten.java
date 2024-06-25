@@ -52,7 +52,7 @@ public class Luyten implements Runnable {
     }
 
     @CommandLine.Parameters(hidden = true)
-    private String[] files = new String[0];
+    private final String[] files = new String[0];
 
     @CommandLine.Option(names = {"-i", "--input"}, description = "File to decompile")
     private File input;
