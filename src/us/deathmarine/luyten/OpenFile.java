@@ -107,8 +107,7 @@ public class OpenFile {
 
         theme.apply(textArea);
 
-        textArea.setFont(new Font(textArea.getFont().getName(), textArea.getFont().getStyle(),
-                luytenPrefs.getFontSize()));
+        textArea.setFont(textArea.getFont().deriveFont((float) luytenPrefs.getFontSize()));
 
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         final JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
@@ -172,9 +171,10 @@ public class OpenFile {
                 Font font = textArea.getFont();
                 int size = font.getSize();
                 if (e.getWheelRotation() > 0) {
-                    textArea.setFont(new Font(font.getName(), font.getStyle(), --size >= 8 ? --size : 8));
+                    size = Math.max(size - 1, 8);
+                    textArea.setFont(font.deriveFont((float) size));
                 } else {
-                    textArea.setFont(new Font(font.getName(), font.getStyle(), ++size));
+                    textArea.setFont(font.deriveFont((float) ++size));
                 }
                 luytenPrefs.setFontSize(size);
             } else {

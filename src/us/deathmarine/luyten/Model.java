@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -445,7 +446,16 @@ public class Model extends JSplitPane {
             return;
         }
 
-        // build tab content and check if file is binary
+        // simple isBinary check
+        boolean isBinary = false;
+        try {
+            String type = Files.probeContentType(Paths.get(path));
+            if (type == null || !type.startsWith("text")) isBinary = true;
+        } catch (Throwable ignored) {
+            // If it fails, it fails - does not matter!
+        }
+
+        // build tab content and again check if file is binary
         double ascii = 0;
         double other = 0;
         StringBuilder sb = new StringBuilder();
@@ -462,7 +472,7 @@ public class Model extends JSplitPane {
             }
         }
 
-        if (other != 0 && other / (ascii + other) > 0.5) {
+        if (isBinary && other != 0 && other / (ascii + other) > 0.5) {
             throw new FileIsBinaryException();
         }
 
