@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -112,6 +113,9 @@ public class OpenFile {
         theme.apply(textArea);
 
         Gutter gutter = scrollPane.getGutter();
+        gutter.setBookmarkingEnabled(true);
+        gutter.setBookmarkIcon(new CircleIcon());
+
         setFont(Font.getFont(luytenPrefs.getFontAttributes()));
 
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -399,6 +403,11 @@ public class OpenFile {
 
         Gutter gutter = tabPane.getScrollPane().getGutter();
         gutter.setLineNumberFont(gutter.getLineNumberFont().deriveFont((float) font.getSize()));
+        Icon icon = gutter.getBookmarkIcon();
+        if (icon instanceof CircleIcon) {
+            ((CircleIcon) icon).setSize(Math.min(gutter.getLineNumberFont().getSize(), 16));
+            gutter.repaint();
+        }
     }
 
     public void decompile() {
