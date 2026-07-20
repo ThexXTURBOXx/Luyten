@@ -304,7 +304,7 @@ public class DecompilerLinkProvider implements LinkProvider {
                 return null;
 
             String declaredSuffix = "";
-            String mostOuterTypeStr = linkParts[1].replaceAll("/", ".");
+            String mostOuterTypeStr = linkParts[1].replace("/", ".");
             boolean isOwnFile = mostOuterTypeStr.equals(currentTypeQualifiedName);
             if (!isOwnFile) {
                 declaredSuffix = " - Declared: " + mostOuterTypeStr;

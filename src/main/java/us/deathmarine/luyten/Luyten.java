@@ -187,18 +187,18 @@ public class Luyten implements Runnable {
      * Add Cool Hyperlink Enhanced for mouse users.
      *
      * @param message
-     * @param e
+     * @param t
      */
-    public static void showExceptionDialog(String message, Exception e) {
+    public static void showExceptionDialog(String message, Throwable t) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
+        t.printStackTrace(pw);
         String stacktrace = sw.toString();
         try {
             sw.close();
             pw.close();
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         System.out.println(stacktrace);
 

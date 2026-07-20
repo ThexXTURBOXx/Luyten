@@ -829,7 +829,7 @@ public class Model extends JSplitPane {
             if (classContainingPackageRoots.contains(packageRoot)) {
                 for (String entry : packages.get(packagePath)) {
                     ArrayList<TreeNodeUserObject> list = new ArrayList<>();
-                    list.add(new TreeNodeUserObject(packagePath, packagePath.replaceAll("/", ".")));
+                    list.add(new TreeNodeUserObject(packagePath, packagePath.replace("/", ".")));
                     list.add(new TreeNodeUserObject(entry));
                     loadNodesByUserObj(top, list);
                 }
@@ -928,7 +928,7 @@ public class Model extends JSplitPane {
         RSyntaxTextArea currentTextArea = null;
         try {
             int pos = house.getSelectedIndex();
-            System.out.println(pos);
+            //System.out.println(pos);
             if (pos >= 0) {
                 RTextScrollPane co = (RTextScrollPane) house.getComponentAt(pos);
                 currentTextArea = (RSyntaxTextArea) co.getViewport().getView();
@@ -980,7 +980,7 @@ public class Model extends JSplitPane {
             String destinationTypeStr = linkParts[1];
             try {
                 bar.setVisible(true);
-                getLabel().setText("Navigating: " + destinationTypeStr.replaceAll("/", "."));
+                getLabel().setText("Navigating: " + destinationTypeStr.replace("/", "."));
 
                 TypeReference type = metadataSystem.lookupType(destinationTypeStr);
                 if (type == null)
@@ -994,7 +994,7 @@ public class Model extends JSplitPane {
 
                 getLabel().setText("Complete");
             } catch (Exception e) {
-                getLabel().setText("Cannot navigate: " + destinationTypeStr.replaceAll("/", "."));
+                getLabel().setText("Cannot navigate: " + destinationTypeStr.replace("/", "."));
                 Luyten.showExceptionDialog("Cannot Navigate!", e);
             } finally {
                 bar.setVisible(false);

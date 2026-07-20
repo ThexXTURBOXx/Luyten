@@ -127,7 +127,7 @@ public class OpenFile {
         textArea.setHyperlinksEnabled(true);
         textArea.setLinkScanningMask(Keymap.ctrlDownModifier());
 
-        textArea.setLinkGenerator((textArea, offs) -> {
+        textArea.setLinkGenerator((ta, offs) -> {
             final String uniqueStr = getUniqueStrForOffset(offs);
             final Integer selectionFrom = getSelectionFromForOffset(offs);
             if (uniqueStr != null && selectionFrom != null) {
@@ -178,7 +178,7 @@ public class OpenFile {
                 }
                 luytenPrefs.setFontSize(size);
             } else {
-                if (scrollPane.isWheelScrollingEnabled() && e.getWheelRotation() != 0) {
+                if (scrollPane.isWheelScrollingEnabled()) {
                     JScrollBar toScroll = scrollPane.getVerticalScrollBar();
                     int direction = e.getWheelRotation() < 0 ? -1 : 1;
                     int orientation = SwingConstants.VERTICAL;
@@ -481,7 +481,7 @@ public class OpenFile {
     }
 
     private void warmUpWithFirstLink() {
-        if (!selectionToUniqueStrTreeMap.keySet().isEmpty()) {
+        if (!selectionToUniqueStrTreeMap.isEmpty()) {
             Selection selection = selectionToUniqueStrTreeMap.keySet().iterator().next();
             getLinkDescriptionForOffset(selection.from);
         }
@@ -598,7 +598,7 @@ public class OpenFile {
                 return;
             }
             String destinationTypeStr = linkParts[1];
-            label.setText("Cannot navigate: " + destinationTypeStr.replaceAll("/", "."));
+            label.setText("Cannot navigate: " + destinationTypeStr.replace("/", "."));
         }
     }
 
