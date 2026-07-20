@@ -48,6 +48,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -65,7 +66,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
-import org.fife.ui.rtextarea.RTextScrollPane;
 
 /**
  * Jar-level model
@@ -196,23 +196,23 @@ public class Model extends JSplitPane {
         SwingUtilities.invokeLater(() -> {
             try {
                 final String title = open.name;
-                RTextScrollPane rTextScrollPane = open.scrollPane;
-                int index = house.indexOfComponent(rTextScrollPane);
-                if (index > -1 && house.getTabComponentAt(index) != open.scrollPane) {
+                JRootPane tabRootPane = open.tabPane;
+                int index = house.indexOfComponent(tabRootPane);
+                if (index > -1 && house.getTabComponentAt(index) != open.tabPane) {
                     index = -1;
                     for (int i = 0; i < house.getTabCount(); i++) {
-                        if (house.getComponentAt(i) == open.scrollPane) {
+                        if (house.getComponentAt(i) == open.tabPane) {
                             index = i;
                             break;
                         }
                     }
                 }
                 if (index < 0) {
-                    house.addTab(title, rTextScrollPane);
-                    index = house.indexOfComponent(rTextScrollPane);
+                    house.addTab(title, tabRootPane);
+                    index = house.indexOfComponent(tabRootPane);
                     house.setSelectedIndex(index);
                     Tab ct = new Tab(title, () -> {
-                        int index1 = house.indexOfComponent(rTextScrollPane);
+                        int index1 = house.indexOfComponent(tabRootPane);
                         closeOpenTab(index1);
                     });
                     house.setTabComponentAt(index, ct);
@@ -230,11 +230,11 @@ public class Model extends JSplitPane {
         if (index < 0 || index >= house.getComponentCount())
             return;
 
-        RTextScrollPane co = (RTextScrollPane) house.getComponentAt(index);
-        RSyntaxTextArea pane = (RSyntaxTextArea) co.getViewport().getView();
+        LuytenTabPane co = (LuytenTabPane) house.getComponentAt(index);
+        RSyntaxTextArea pane = co.getTextArea();
         OpenFile open = null;
         for (OpenFile file : hmap)
-            if (pane.equals(file.textArea))
+            if (pane.equals(file.tabPane.getTextArea()))
                 open = file;
         if (open != null)
             hmap.remove(open);
@@ -495,7 +495,7 @@ public class Model extends JSplitPane {
                 return;
             }
             for (OpenFile open : hmap) {
-                if (house.indexOfComponent(open.scrollPane) == selectedIndex
+                if (house.indexOfComponent(open.tabPane) == selectedIndex
                     && open.getType() != null && !open.isContentValid()) {
                     updateOpenClass(open);
                     break;
@@ -542,7 +542,7 @@ public class Model extends JSplitPane {
 
     private boolean isTabInForeground(OpenFile open) {
         int selectedIndex = house.getSelectedIndex();
-        return (selectedIndex >= 0 && selectedIndex == house.indexOfComponent(open.scrollPane));
+        return (selectedIndex >= 0 && selectedIndex == house.indexOfComponent(open.tabPane));
     }
 
     final class State implements AutoCloseable {
@@ -874,7 +874,7 @@ public class Model extends JSplitPane {
 
     public void closeFile() {
         for (OpenFile co : hmap) {
-            int pos = house.indexOfComponent(co.scrollPane);
+            int pos = house.indexOfComponent(co.tabPane);
             if (pos >= 0)
                 house.remove(pos);
             co.close();
@@ -899,7 +899,7 @@ public class Model extends JSplitPane {
             if (in != null) {
                 setTheme(Theme.load(in));
                 for (OpenFile f : hmap) {
-                    getTheme().apply(f.textArea);
+                    getTheme().apply(f.tabPane.getTextArea());
                 }
             }
         } catch (Exception e) {
@@ -940,8 +940,8 @@ public class Model extends JSplitPane {
             int pos = house.getSelectedIndex();
             //System.out.println(pos);
             if (pos >= 0) {
-                RTextScrollPane co = (RTextScrollPane) house.getComponentAt(pos);
-                currentTextArea = (RSyntaxTextArea) co.getViewport().getView();
+                LuytenTabPane co = (LuytenTabPane) house.getComponentAt(pos);
+                currentTextArea = co.getTextArea();
             }
         } catch (Exception e) {
             Luyten.showExceptionDialog("Exception!", e);
@@ -972,8 +972,8 @@ public class Model extends JSplitPane {
                 open.setContent(decompiledSource);
                 JTabbedPane pane = new JTabbedPane();
                 pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-                pane.addTab("title", open.scrollPane);
-                pane.setSelectedIndex(pane.indexOfComponent(open.scrollPane));
+                pane.addTab("title", open.tabPane);
+                pane.setSelectedIndex(pane.indexOfComponent(open.tabPane));
             } catch (Exception e) {
                 Luyten.showExceptionDialog("Exception!", e);
             }

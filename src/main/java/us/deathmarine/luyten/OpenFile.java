@@ -32,6 +32,7 @@ import javax.swing.event.HyperlinkEvent;
 import org.fife.ui.rsyntaxtextarea.LinkGeneratorResult;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.rtextarea.Gutter;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class OpenFile {
@@ -51,8 +52,7 @@ public class OpenFile {
     private boolean isFirstTimeRun = true;
 
     MainWindow mainWindow;
-    RTextScrollPane scrollPane;
-    RSyntaxTextArea textArea;
+    final LuytenTabPane tabPane;
     String name;
     String path;
 
@@ -65,6 +65,7 @@ public class OpenFile {
     private DecompilationOptions decompilationOptions;
     private TypeDefinition type;
 
+    @SuppressWarnings("unchecked")
     public OpenFile(String name, String path, Theme theme, final MainWindow mainWindow) {
         this.name = name;
         this.path = path;
@@ -73,7 +74,7 @@ public class OpenFile {
         configSaver = ConfigSaver.getLoadedInstance();
         luytenPrefs = configSaver.getLuytenPreferences();
 
-        textArea = new RSyntaxTextArea(25, 70);
+        RSyntaxTextArea textArea = new RSyntaxTextArea(25, 70);
         textArea.setCaretPosition(0);
         textArea.requestFocusInWindow();
         textArea.setMarkOccurrences(true);
@@ -83,7 +84,9 @@ public class OpenFile {
         textArea.setCodeFoldingEnabled(true);
 
         FileUtil.setLanguage(textArea, name);
-        scrollPane = new RTextScrollPane(textArea, true);
+
+        tabPane = new LuytenTabPane(textArea);
+        RTextScrollPane scrollPane = tabPane.getScrollPane();
 
         scrollPane.setIconRowHeaderEnabled(true);
         textArea.setText("");
@@ -98,7 +101,7 @@ public class OpenFile {
             fontChooser.setSelectedFontSize(textArea.getFont().getSize());
             int result = fontChooser.showDialog(mainWindow);
             if (result == JFontChooser.OK_OPTION) {
-                textArea.setFont(fontChooser.getSelectedFont());
+                setFont(fontChooser.getSelectedFont());
                 luytenPrefs.setFontSize(fontChooser.getSelectedFontSize());
             }
         });
@@ -107,7 +110,8 @@ public class OpenFile {
 
         theme.apply(textArea);
 
-        textArea.setFont(textArea.getFont().deriveFont((float) luytenPrefs.getFontSize()));
+        Gutter gutter = scrollPane.getGutter();
+        setFont(Font.getFont(luytenPrefs.getFontAttributes()));
 
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         final JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
@@ -171,11 +175,14 @@ public class OpenFile {
                 Font font = textArea.getFont();
                 int size = font.getSize();
                 if (e.getWheelRotation() > 0) {
-                    size = Math.max(size - 1, 8);
-                    textArea.setFont(font.deriveFont((float) size));
+                    --size;
                 } else {
-                    textArea.setFont(font.deriveFont((float) ++size));
+                    ++size;
                 }
+                size = Math.max(size, 8);
+
+                setFont(font.deriveFont((float) size));
+
                 luytenPrefs.setFontSize(size);
             } else {
                 if (scrollPane.isWheelScrollingEnabled()) {
@@ -381,8 +388,16 @@ public class OpenFile {
     }
 
     public void setContent(String content) {
+        RSyntaxTextArea textArea = tabPane.getTextArea();
         textArea.setText(content);
         FileUtil.setLanguage(textArea, name);
+    }
+
+    public void setFont(Font font) {
+        tabPane.getTextArea().setFont(font);
+
+        Gutter gutter = tabPane.getScrollPane().getGutter();
+        gutter.setLineNumberFont(gutter.getLineNumberFont().deriveFont((float) font.getSize()));
     }
 
     public void decompile() {
@@ -400,7 +415,7 @@ public class OpenFile {
     private void decompileWithoutLinks() {
         this.invalidateContent();
         isNavigationLinksValid = false;
-        textArea.setHyperlinksEnabled(false);
+        tabPane.getTextArea().setHyperlinksEnabled(false);
 
         StringWriter stringwriter = new StringWriter();
         PlainTextOutput plainTextOutput = new PlainTextOutput(stringwriter);
@@ -427,17 +442,17 @@ public class OpenFile {
         final Double scrollPercent = lastScrollPercent;
         if (scrollPercent != null && initialNavigationLink == null) {
             SwingUtilities.invokeLater(() -> {
-                textArea.setText(content);
+                tabPane.getTextArea().setText(content);
                 restoreScrollPosition(scrollPercent);
             });
         } else {
-            textArea.setText(content);
+            tabPane.getTextArea().setText(content);
         }
     }
 
     private void restoreScrollPosition(final double position) {
         SwingUtilities.invokeLater(() -> {
-            JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
+            JScrollBar verticalScrollbar = tabPane.getScrollPane().getVerticalScrollBar();
             if (verticalScrollbar == null)
                 return;
             int scrollMax = verticalScrollbar.getMaximum() - verticalScrollbar.getMinimum();
@@ -467,7 +482,7 @@ public class OpenFile {
     }
 
     private void resetCursor() {
-        SwingUtilities.invokeLater(() -> textArea.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)));
+        SwingUtilities.invokeLater(() -> tabPane.getTextArea().setCursor(new Cursor(Cursor.DEFAULT_CURSOR)));
     }
 
     private void doEnableLinks() {
@@ -476,7 +491,7 @@ public class OpenFile {
         buildSelectionToUniqueStrTreeMap();
         clearLinksCache();
         isNavigationLinksValid = true;
-        textArea.setHyperlinksEnabled(true);
+        tabPane.getTextArea().setHyperlinksEnabled(true);
         warmUpWithFirstLink();
     }
 
@@ -617,6 +632,7 @@ public class OpenFile {
 
     private void doLocalNavigation(Selection selection) {
         try {
+            RSyntaxTextArea textArea = tabPane.getTextArea();
             textArea.requestFocusInWindow();
             if (selection != null) {
                 textArea.setSelectionStart(selection.from);
@@ -634,6 +650,7 @@ public class OpenFile {
     private void scrollToSelection(final int selectionBeginningOffset) {
         SwingUtilities.invokeLater(() -> {
             try {
+                RSyntaxTextArea textArea = tabPane.getTextArea();
                 int fullHeight = textArea.getBounds().height;
                 int viewportHeight = textArea.getVisibleRect().height;
                 int viewportLineCount = viewportHeight / textArea.getLineHeight();
