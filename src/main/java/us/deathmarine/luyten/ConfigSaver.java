@@ -124,9 +124,22 @@ public class ConfigSaver {
                 Boolean defaultBool = (Boolean) (defaultVal == null ? Boolean.FALSE : defaultVal);
                 field.setBoolean(newLuytenPrefs, prefs.getBoolean(prefId, defaultBool));
 
+            } else if (field.getType() == Long.class || field.getType() == long.class) {
+                Long defaultLong = (Long) (defaultVal == null ? Long.valueOf(0) : defaultVal);
+                field.setLong(newLuytenPrefs, prefs.getLong(prefId, defaultLong));
+
             } else if (field.getType() == Integer.class || field.getType() == int.class) {
                 Integer defaultInt = (Integer) (defaultVal == null ? Integer.valueOf(0) : defaultVal);
                 field.setInt(newLuytenPrefs, prefs.getInt(prefId, defaultInt));
+
+            } else if (field.getType() == Float.class || field.getType() == float.class) {
+                Float defaultInt = (Float) (defaultVal == null ? Float.valueOf(0) : defaultVal);
+                field.set(newLuytenPrefs, prefs.getFloat(prefId, defaultInt));
+
+            } else if (field.getType() == Double.class || field.getType() == double.class) {
+                Double defaultInt = (Double) (defaultVal == null ? Double.valueOf(0) : defaultVal);
+                field.set(newLuytenPrefs, prefs.getDouble(prefId, defaultInt));
+
             }
         }
         return newLuytenPrefs;
@@ -179,8 +192,17 @@ public class ConfigSaver {
             } else if (field.getType() == Boolean.class || field.getType() == boolean.class) {
                 prefs.putBoolean(prefId, (Boolean) (value == null ? Boolean.FALSE : value));
 
+            } else if (field.getType() == Long.class || field.getType() == long.class) {
+                prefs.putLong(prefId, (Long) (value == null ? Long.valueOf(0) : value));
+
             } else if (field.getType() == Integer.class || field.getType() == int.class) {
                 prefs.putInt(prefId, (Integer) (value == null ? Integer.valueOf(0) : value));
+
+            } else if (field.getType() == Float.class || field.getType() == float.class) {
+                prefs.putFloat(prefId, (Float) (value == null ? Float.valueOf(0) : value));
+
+            } else if (field.getType() == Double.class || field.getType() == double.class) {
+                prefs.putDouble(prefId, (Double) (value == null ? Double.valueOf(0) : value));
             }
         }
     }
