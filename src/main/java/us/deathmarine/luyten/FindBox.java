@@ -63,7 +63,7 @@ public class FindBox extends JDialog {
         regex = new JCheckBox("Regex");
         wholew = new JCheckBox("Whole Words");
         reverse = new JCheckBox("Search Backwards");
-        wrap = new JCheckBox("Wrap");
+        wrap = new JCheckBox("Wrap", true);
 
         findButton = new JButton("Find");
         findButton.addActionListener(new FindButton());
