@@ -89,7 +89,8 @@ public class FileSaver {
         }).start();
     }
 
-    public void saveAllDecompiled(final File inFile, final File outFile) {
+    public void saveAllDecompiled(final Model m, final File outFile) {
+        final File inFile = m.getOpenedFile();
         new Thread(() -> {
             long time = System.currentTimeMillis();
             try {
@@ -98,7 +99,7 @@ public class FileSaver {
                 label.setText("Extracting: " + outFile.getName());
                 System.out.println("[SaveAll]: " + inFile.getName() + " -> " + outFile.getName());
 
-                performSaveOperation(inFile, outFile);
+                performSaveOperation(m.isFileArchive(), inFile, outFile);
                 if (cancel) {
                     label.setText("Cancelled");
                     outFile.delete();
@@ -122,7 +123,7 @@ public class FileSaver {
             try {
                 setExtracting(true);
                 System.out.println("[SaveAll]: " + inFile.getName() + " -> " + outFile.getName());
-                performSaveOperation(inFile, outFile);
+                performSaveOperation(Model.isArchive(inFile.toPath()), inFile, outFile);
                 if (cancel) {
                     outFile.delete();
                     setCancel(false);
@@ -138,9 +139,9 @@ public class FileSaver {
         }).start();
     }
 
-    private void performSaveOperation(File inFile, File outFile) throws Exception {
+    private void performSaveOperation(boolean isArchive, File inFile, File outFile) throws Exception {
         String inFileName = inFile.getName().toLowerCase();
-        if (inFileName.endsWith(".jar") || inFileName.endsWith(".zip")) {
+        if (isArchive || inFileName.endsWith(".jar") || inFileName.endsWith(".zip")) {
             doSaveJarDecompiled(inFile, outFile);
         } else if (inFileName.endsWith(".class")) {
             doSaveClassDecompiled(inFile, outFile);

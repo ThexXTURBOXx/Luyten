@@ -147,8 +147,7 @@ public class MainWindow extends JFrame {
             this.setExitOnEscWhenEnabled(jarModel);
         }
 
-        if (jarModel != null && (fileFromCommandLine.getName().toLowerCase().endsWith(".jar")
-                                 || fileFromCommandLine.getName().toLowerCase().endsWith(".zip"))) {
+        if (jarModel != null && jarModel.isFileArchive()) {
             jarModel.startWarmUpThread();
         }
 
@@ -232,22 +231,26 @@ public class MainWindow extends JFrame {
     }
 
     public void onSaveAllMenu() {
-        File openedFile = this.getSelectedModel().getOpenedFile();
+        Model m = this.getSelectedModel();
+        if (m == null)
+            return;
+
+        File openedFile = m.getOpenedFile();
         if (openedFile == null)
             return;
 
         String fileName = openedFile.getName();
-        if (fileName.endsWith(".class")) {
+        if (m.isFileArchive()) {
+            fileName = "decompiled-" + fileName + ".zip";
+        } else if (fileName.endsWith(".class")) {
             fileName = fileName.replace(".class", ".java");
-        } else if (fileName.toLowerCase().endsWith(".jar")) {
-            fileName = "decompiled-" + fileName.replaceAll("\\.[jJ][aA][rR]", ".zip");
         } else {
             fileName = "saved-" + fileName;
         }
 
         File selectedFileToSave = fileDialog.doSaveAllDialog(fileName);
         if (selectedFileToSave != null) {
-            fileSaver.saveAllDecompiled(openedFile, selectedFileToSave);
+            fileSaver.saveAllDecompiled(m, selectedFileToSave);
         }
     }
 

@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +83,7 @@ public class Model extends JSplitPane {
     private final JTree tree;
     public JTabbedPane house;
     private File file;
+    private boolean isArchive;
     private final DecompilerSettings settings;
     private final DecompilationOptions decompilationOptions;
     private Theme theme;
@@ -322,7 +324,7 @@ public class Model extends JSplitPane {
                 }
                 path.append(name);
 
-                if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
+                if (isFileArchive()) {
                     if (state == null) {
                         JarFile jfile = new JarFile(file);
                         ITypeLoader jarLoader = new JarTypeLoader(jfile);
@@ -661,11 +663,19 @@ public class Model extends JSplitPane {
     public void loadFile(File file) {
         if (open)
             closeFile();
-        this.file = file;
+        setFile(file);
 
         RecentFiles.add(file.getAbsolutePath());
         mainWindow.mainMenuBar.updateRecentFiles();
         loadTree();
+    }
+
+    private void setFile(File file) {
+        this.file = file;
+
+        if (file != null) {
+            this.isArchive = isArchive(this.file.toPath());
+        }
     }
 
     public void updateTree() {
@@ -685,7 +695,7 @@ public class Model extends JSplitPane {
                 if (file.length() > MAX_JAR_FILE_SIZE_BYTES) {
                     throw new TooLargeFileException(file.length());
                 }
-                if (file.getName().endsWith(".zip") || file.getName().endsWith(".jar")) {
+                if (isFileArchive()) {
                     JarFile jarFile = new JarFile(file);
                     getLabel().setText("Loading: " + jarFile.getName());
                     bar.setVisible(true);
@@ -877,7 +887,7 @@ public class Model extends JSplitPane {
 
         hmap.clear();
         tree.setModel(new DefaultTreeModel(null));
-        file = null;
+        setFile(file);
         treeExpansionState = null;
         open = false;
         mainWindow.onFileLoadEnded();
@@ -1024,6 +1034,19 @@ public class Model extends JSplitPane {
 
     public String getFileName() {
         return file == null ? null : getName(file.getName());
+    }
+
+    public boolean isFileArchive() {
+        return isArchive;
+    }
+
+    public static boolean isArchive(Path path) {
+        try (InputStream is = Files.newInputStream(path)) {
+            if (is.read() == 'P' && is.read() == 'K')
+                return true;
+        } catch (Throwable ignored) {
+        }
+        return false;
     }
 
 }
