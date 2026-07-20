@@ -496,15 +496,15 @@ public class MainMenuBar extends JMenuBar {
             link.addMouseListener(new LinkListener(procyon, link));
             pane.add(link);
             pane.add(new JLabel("Version: " + Procyon.version()));
-            pane.add(new JLabel("(c) 2024 Mike Strobel"));
+            pane.add(new JLabel("(c) 2012 Mike Strobel"));
 
             String rsyntax = "https://github.com/bobbylight/RSyntaxTextArea";
             link = new JLabel("<HTML><FONT color=\"#000099\"><U>" + rsyntax + "</U></FONT></HTML>");
             link.setCursor(new Cursor(Cursor.HAND_CURSOR));
             link.addMouseListener(new LinkListener(rsyntax, link));
             pane.add(link);
-            pane.add(new JLabel("Version: 3.4.1"));
-            pane.add(new JLabel("(c) 2024 Robert Futrell"));
+            pane.add(new JLabel("Version: 3.6.3"));
+            pane.add(new JLabel("(c) 2021 Robert Futrell"));
 
             String picocli = "https://github.com/remkop/picocli";
             link = new JLabel("<HTML><FONT color=\"#000099\"><U>" + picocli + "</U></FONT></HTML>");
@@ -512,7 +512,8 @@ public class MainMenuBar extends JMenuBar {
             link.addMouseListener(new LinkListener(picocli, link));
             pane.add(link);
             pane.add(new JLabel("Version: " + CommandLine.VERSION));
-            pane.add(new JLabel("(c) 2024 Remko Popma"));
+            pane.add(new JLabel("(c) 2017 Remko Popma"));
+
             pane.add(new JLabel(" "));
 
             JOptionPane.showMessageDialog(null, pane);
