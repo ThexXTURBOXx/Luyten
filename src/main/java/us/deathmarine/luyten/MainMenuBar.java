@@ -36,6 +36,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.StyleContext;
 import picocli.CommandLine;
 
 /**
@@ -473,7 +474,7 @@ public class MainMenuBar extends JMenuBar {
             JPanel pane = new JPanel();
             pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
             JLabel title = new JLabel(Luyten.VERSION);
-            title.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
+            title.setFont(StyleContext.getDefaultStyleContext().getFont(Font.SANS_SERIF, Font.PLAIN, 18));
             pane.add(title);
             pane.add(new JLabel("by Deathmarine"));
             String project = "https://github.com/deathmarine/Luyten";

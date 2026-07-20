@@ -32,6 +32,7 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.StyleContext;
 import picocli.CommandLine;
 
 /**
@@ -213,7 +214,7 @@ public class Luyten implements Runnable {
         }
         pane.add(new JLabel(" \n")); // Whitespace
         final JTextArea exception = new JTextArea(25, 100);
-        exception.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
+        exception.setFont(StyleContext.getDefaultStyleContext().getFont(Font.SANS_SERIF, Font.PLAIN, 10));
         exception.setText(stacktrace);
         exception.addMouseListener(new MouseAdapter() {
             @Override

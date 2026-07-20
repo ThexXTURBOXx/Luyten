@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.font.TextAttribute;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
@@ -102,7 +103,7 @@ public class OpenFile {
             int result = fontChooser.showDialog(mainWindow);
             if (result == JFontChooser.OK_OPTION) {
                 setFont(fontChooser.getSelectedFont());
-                luytenPrefs.setFontSize(fontChooser.getSelectedFontSize());
+                luytenPrefs.setFontAttributes((Map<TextAttribute, Object>) fontChooser.getSelectedFont().getAttributes());
             }
         });
         pop.add(item);
