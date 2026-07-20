@@ -32,6 +32,7 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.StyleContext;
 import picocli.CommandLine;
 
 /**
@@ -80,6 +81,7 @@ public class Luyten implements Runnable {
         }));
 
         try {
+            System.setProperty("sun.java2d.opengl", "true");
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
@@ -187,18 +189,18 @@ public class Luyten implements Runnable {
      * Add Cool Hyperlink Enhanced for mouse users.
      *
      * @param message
-     * @param e
+     * @param t
      */
-    public static void showExceptionDialog(String message, Exception e) {
+    public static void showExceptionDialog(String message, Throwable t) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
+        t.printStackTrace(pw);
         String stacktrace = sw.toString();
         try {
             sw.close();
             pw.close();
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         System.out.println(stacktrace);
 
@@ -213,7 +215,7 @@ public class Luyten implements Runnable {
         }
         pane.add(new JLabel(" \n")); // Whitespace
         final JTextArea exception = new JTextArea(25, 100);
-        exception.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
+        exception.setFont(StyleContext.getDefaultStyleContext().getFont(Font.SANS_SERIF, Font.PLAIN, 10));
         exception.setText(stacktrace);
         exception.addMouseListener(new MouseAdapter() {
             @Override

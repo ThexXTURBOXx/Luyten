@@ -1,5 +1,10 @@
 package us.deathmarine.luyten;
 
+import java.awt.Font;
+import java.awt.font.TextAttribute;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Do not instantiate this class, get the instance from ConfigSaver. All
  * not-static fields will be saved automatically named by the field's java
@@ -15,7 +20,12 @@ public class LuytenPreferences {
     private String themeXml = DEFAULT_THEME_XML;
     private String fileOpenCurrentDirectory = "";
     private String fileSaveCurrentDirectory = "";
-    private int fontSize = 10;
+
+    private String fontFamily = "";
+    private float fontSize = 10;
+    private int fontStyle = Font.PLAIN;
+    private boolean fontKerning = false;
+    private boolean fontLigatures = false;
 
     private boolean isPackageExplorerStyle = true;
     private boolean isFilterOutInnerClassEntries = true;
@@ -78,11 +88,25 @@ public class LuytenPreferences {
         this.isExitByEscEnabled = isExitByEscEnabled;
     }
 
-    public int getFontSize() {
-        return fontSize;
+    public Map<TextAttribute, Object> getFontAttributes() {
+        Map<TextAttribute, Object> attrs = new HashMap<>();
+        attrs.put(TextAttribute.FAMILY, fontFamily);
+        attrs.put(TextAttribute.SIZE, fontSize);
+        JFontChooser.addStyleToAttrs(fontStyle, attrs);
+        if (fontKerning) attrs.put(TextAttribute.KERNING, TextAttribute.KERNING_ON);
+        if (fontLigatures) attrs.put(TextAttribute.LIGATURES, TextAttribute.LIGATURES_ON);
+        return attrs;
     }
 
-    public void setFontSize(int fontSize) {
+    public void setFontAttributes(Map<TextAttribute, Object> attrs) {
+        this.fontFamily = (String) attrs.getOrDefault(TextAttribute.FAMILY, Font.DIALOG);
+        this.fontSize = (Float) attrs.getOrDefault(TextAttribute.SIZE, 10);
+        this.fontStyle = JFontChooser.getStyleFromAttrs(attrs);
+        this.fontKerning = attrs.getOrDefault(TextAttribute.KERNING, 0) == TextAttribute.KERNING_ON;
+        this.fontLigatures = attrs.getOrDefault(TextAttribute.LIGATURES, 0) == TextAttribute.LIGATURES_ON;
+    }
+
+    public void setFontSize(float fontSize) {
         this.fontSize = fontSize;
     }
 

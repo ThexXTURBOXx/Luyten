@@ -14,11 +14,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.font.TextAttribute;
 import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -32,6 +34,7 @@ import javax.swing.event.HyperlinkEvent;
 import org.fife.ui.rsyntaxtextarea.LinkGeneratorResult;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.rtextarea.Gutter;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class OpenFile {
@@ -51,8 +54,7 @@ public class OpenFile {
     private boolean isFirstTimeRun = true;
 
     MainWindow mainWindow;
-    RTextScrollPane scrollPane;
-    RSyntaxTextArea textArea;
+    final LuytenTabPane tabPane;
     String name;
     String path;
 
@@ -65,6 +67,7 @@ public class OpenFile {
     private DecompilationOptions decompilationOptions;
     private TypeDefinition type;
 
+    @SuppressWarnings("unchecked")
     public OpenFile(String name, String path, Theme theme, final MainWindow mainWindow) {
         this.name = name;
         this.path = path;
@@ -73,7 +76,7 @@ public class OpenFile {
         configSaver = ConfigSaver.getLoadedInstance();
         luytenPrefs = configSaver.getLuytenPreferences();
 
-        textArea = new RSyntaxTextArea(25, 70);
+        RSyntaxTextArea textArea = new RSyntaxTextArea(25, 70);
         textArea.setCaretPosition(0);
         textArea.requestFocusInWindow();
         textArea.setMarkOccurrences(true);
@@ -83,7 +86,9 @@ public class OpenFile {
         textArea.setCodeFoldingEnabled(true);
 
         FileUtil.setLanguage(textArea, name);
-        scrollPane = new RTextScrollPane(textArea, true);
+
+        tabPane = new LuytenTabPane(textArea);
+        RTextScrollPane scrollPane = tabPane.getScrollPane();
 
         scrollPane.setIconRowHeaderEnabled(true);
         textArea.setText("");
@@ -98,8 +103,8 @@ public class OpenFile {
             fontChooser.setSelectedFontSize(textArea.getFont().getSize());
             int result = fontChooser.showDialog(mainWindow);
             if (result == JFontChooser.OK_OPTION) {
-                textArea.setFont(fontChooser.getSelectedFont());
-                luytenPrefs.setFontSize(fontChooser.getSelectedFontSize());
+                setFont(fontChooser.getSelectedFont());
+                luytenPrefs.setFontAttributes((Map<TextAttribute, Object>) fontChooser.getSelectedFont().getAttributes());
             }
         });
         pop.add(item);
@@ -107,7 +112,11 @@ public class OpenFile {
 
         theme.apply(textArea);
 
-        textArea.setFont(textArea.getFont().deriveFont((float) luytenPrefs.getFontSize()));
+        Gutter gutter = scrollPane.getGutter();
+        gutter.setBookmarkingEnabled(true);
+        gutter.setBookmarkIcon(new CircleIcon());
+
+        setFont(Font.getFont(luytenPrefs.getFontAttributes()));
 
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         final JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
@@ -127,7 +136,7 @@ public class OpenFile {
         textArea.setHyperlinksEnabled(true);
         textArea.setLinkScanningMask(Keymap.ctrlDownModifier());
 
-        textArea.setLinkGenerator((textArea, offs) -> {
+        textArea.setLinkGenerator((ta, offs) -> {
             final String uniqueStr = getUniqueStrForOffset(offs);
             final Integer selectionFrom = getSelectionFromForOffset(offs);
             if (uniqueStr != null && selectionFrom != null) {
@@ -171,14 +180,17 @@ public class OpenFile {
                 Font font = textArea.getFont();
                 int size = font.getSize();
                 if (e.getWheelRotation() > 0) {
-                    size = Math.max(size - 1, 8);
-                    textArea.setFont(font.deriveFont((float) size));
+                    --size;
                 } else {
-                    textArea.setFont(font.deriveFont((float) ++size));
+                    ++size;
                 }
+                size = Math.max(size, 8);
+
+                setFont(font.deriveFont((float) size));
+
                 luytenPrefs.setFontSize(size);
             } else {
-                if (scrollPane.isWheelScrollingEnabled() && e.getWheelRotation() != 0) {
+                if (scrollPane.isWheelScrollingEnabled()) {
                     JScrollBar toScroll = scrollPane.getVerticalScrollBar();
                     int direction = e.getWheelRotation() < 0 ? -1 : 1;
                     int orientation = SwingConstants.VERTICAL;
@@ -381,8 +393,21 @@ public class OpenFile {
     }
 
     public void setContent(String content) {
+        RSyntaxTextArea textArea = tabPane.getTextArea();
         textArea.setText(content);
         FileUtil.setLanguage(textArea, name);
+    }
+
+    public void setFont(Font font) {
+        tabPane.getTextArea().setFont(font);
+
+        Gutter gutter = tabPane.getScrollPane().getGutter();
+        gutter.setLineNumberFont(gutter.getLineNumberFont().deriveFont((float) font.getSize()));
+        Icon icon = gutter.getBookmarkIcon();
+        if (icon instanceof CircleIcon) {
+            ((CircleIcon) icon).setSize(Math.min(gutter.getLineNumberFont().getSize(), 16));
+            gutter.repaint();
+        }
     }
 
     public void decompile() {
@@ -400,7 +425,7 @@ public class OpenFile {
     private void decompileWithoutLinks() {
         this.invalidateContent();
         isNavigationLinksValid = false;
-        textArea.setHyperlinksEnabled(false);
+        tabPane.getTextArea().setHyperlinksEnabled(false);
 
         StringWriter stringwriter = new StringWriter();
         PlainTextOutput plainTextOutput = new PlainTextOutput(stringwriter);
@@ -427,17 +452,17 @@ public class OpenFile {
         final Double scrollPercent = lastScrollPercent;
         if (scrollPercent != null && initialNavigationLink == null) {
             SwingUtilities.invokeLater(() -> {
-                textArea.setText(content);
+                tabPane.getTextArea().setText(content);
                 restoreScrollPosition(scrollPercent);
             });
         } else {
-            textArea.setText(content);
+            tabPane.getTextArea().setText(content);
         }
     }
 
     private void restoreScrollPosition(final double position) {
         SwingUtilities.invokeLater(() -> {
-            JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
+            JScrollBar verticalScrollbar = tabPane.getScrollPane().getVerticalScrollBar();
             if (verticalScrollbar == null)
                 return;
             int scrollMax = verticalScrollbar.getMaximum() - verticalScrollbar.getMinimum();
@@ -467,7 +492,7 @@ public class OpenFile {
     }
 
     private void resetCursor() {
-        SwingUtilities.invokeLater(() -> textArea.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)));
+        SwingUtilities.invokeLater(() -> tabPane.getTextArea().setCursor(new Cursor(Cursor.DEFAULT_CURSOR)));
     }
 
     private void doEnableLinks() {
@@ -476,12 +501,12 @@ public class OpenFile {
         buildSelectionToUniqueStrTreeMap();
         clearLinksCache();
         isNavigationLinksValid = true;
-        textArea.setHyperlinksEnabled(true);
+        tabPane.getTextArea().setHyperlinksEnabled(true);
         warmUpWithFirstLink();
     }
 
     private void warmUpWithFirstLink() {
-        if (!selectionToUniqueStrTreeMap.keySet().isEmpty()) {
+        if (!selectionToUniqueStrTreeMap.isEmpty()) {
             Selection selection = selectionToUniqueStrTreeMap.keySet().iterator().next();
             getLinkDescriptionForOffset(selection.from);
         }
@@ -598,7 +623,7 @@ public class OpenFile {
                 return;
             }
             String destinationTypeStr = linkParts[1];
-            label.setText("Cannot navigate: " + destinationTypeStr.replaceAll("/", "."));
+            label.setText("Cannot navigate: " + destinationTypeStr.replace("/", "."));
         }
     }
 
@@ -617,6 +642,7 @@ public class OpenFile {
 
     private void doLocalNavigation(Selection selection) {
         try {
+            RSyntaxTextArea textArea = tabPane.getTextArea();
             textArea.requestFocusInWindow();
             if (selection != null) {
                 textArea.setSelectionStart(selection.from);
@@ -634,6 +660,7 @@ public class OpenFile {
     private void scrollToSelection(final int selectionBeginningOffset) {
         SwingUtilities.invokeLater(() -> {
             try {
+                RSyntaxTextArea textArea = tabPane.getTextArea();
                 int fullHeight = textArea.getBounds().height;
                 int viewportHeight = textArea.getVisibleRect().height;
                 int viewportLineCount = viewportHeight / textArea.getLineHeight();

@@ -63,7 +63,7 @@ public class FindBox extends JDialog {
         regex = new JCheckBox("Regex");
         wholew = new JCheckBox("Whole Words");
         reverse = new JCheckBox("Search Backwards");
-        wrap = new JCheckBox("Wrap");
+        wrap = new JCheckBox("Wrap", true);
 
         findButton = new JButton("Find");
         findButton.addActionListener(new FindButton());
@@ -148,6 +148,11 @@ public class FindBox extends JDialog {
                 if (wrap.isSelected()) {
                     pane.setSelectionStart(0);
                     pane.setSelectionEnd(0);
+                    if (SearchEngine.find(pane, context).wasFound()) {
+                        mainWindow.getLabel().setText("Reached end of file, wrapped search.");
+                    } else {
+                        mainWindow.getLabel().setText("Search Complete");
+                    }
                 } else {
                     mainWindow.getLabel().setText("Search Complete");
                 }

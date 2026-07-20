@@ -273,10 +273,10 @@ public class FindAllBox extends JDialog {
                                                 Luyten.showExceptionDialog("Caught Exception on: " + entry.getName(),
                                                         ise);
                                             }
-                                        } catch (Exception e) {
+                                        } catch (Throwable t) {
                                             addClassName(entry.getName() + "  (search failed due to Exception. "
                                                          + "Opening file will fail too)");
-                                            Luyten.showExceptionDialog("Caught Exception on: " + entry.getName(), e);
+                                            Luyten.showExceptionDialog("Caught Exception on: " + entry.getName(), t);
                                         }
                                     }
                                 } else {
