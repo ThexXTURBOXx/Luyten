@@ -81,6 +81,7 @@ public class Luyten implements Runnable {
         }));
 
         try {
+            System.setProperty("sun.java2d.opengl", "true");
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
