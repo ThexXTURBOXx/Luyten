@@ -4,7 +4,7 @@
 
     <groupId>us.deathmarine</groupId>
     <artifactId>luyten</artifactId>
-    <version>0.8.6</version>
+    <version>1.0.0</version>
 
     <inceptionYear>2013</inceptionYear>
     <description>An Open Source Java Decompiler Gui for Procyon</description>
